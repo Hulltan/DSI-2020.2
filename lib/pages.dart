@@ -23,6 +23,28 @@ class _FirstPageState extends State<FirstPage> {
     });
   }
 
+  void _resetCounter() {
+    AlertDialog alert = AlertDialog(
+      content: Text(
+        'The counter has reset.',
+        style: TextStyle(color: Colors.greenAccent),
+      ),
+      actions: [
+        TextButton(
+          onPressed: Navigator.of(context).pop,
+          child: Text(
+            'Ok',
+            style: TextStyle(color: Colors.greenAccent),
+          ),
+        )
+      ],
+    );
+    showDialog(context: context, builder: (_) => alert);
+    setState(() {
+      _counter = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,11 +62,24 @@ class _FirstPageState extends State<FirstPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        backgroundColor: Colors.greenAccent,
-        tooltip: 'Increment',
-        child: Icon(Icons.plus_one),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: Icon(Icons.plus_one),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          FloatingActionButton(
+              onPressed: _resetCounter,
+              tooltip: 'Reset',
+              child: Icon(
+                Icons.clear,
+              )),
+        ],
       ),
     );
   }

@@ -12,7 +12,6 @@ class MyApp extends StatelessWidget {
       title: 'Counter App',
       theme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
       ),
       home: HomePage(title: 'Counter'),
       debugShowCheckedModeBanner: false,
@@ -59,7 +58,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.calculate), label: 'Results'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calculate), label: 'Results'),
         ],
         currentIndex: _selectedItem,
         onTap: (index) {
