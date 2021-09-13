@@ -27,6 +27,10 @@ class _RandomWordsState extends State<RandomWords> {
   final _saved = <WordPair>{};
   final _biggerFont = const TextStyle(fontSize: 18);
 
+  void _delete(WordPair pair) {
+    _saved.remove(pair);
+  }
+
   void _pushSaved() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -88,7 +92,14 @@ class _RandomWordsState extends State<RandomWords> {
             key: ValueKey(_suggestions[index]),
             child: _buildRow(_suggestions[index]),
             onDismissed: (DismissDirection direction) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('The item has been removed.'),
+                  duration: Duration(milliseconds: 400),
+                ),
+              );
               setState(() {
+                _delete(_suggestions[index]);
                 _suggestions.removeAt(index);
               });
             },
@@ -115,7 +126,7 @@ class _RandomWordsState extends State<RandomWords> {
       onTap: () {
         setState(() {
           if (alreadySaved) {
-            _saved.remove(pair);
+            _delete(pair);
           } else {
             _saved.add(pair);
           }
