@@ -25,7 +25,10 @@ class RandomWords extends StatefulWidget {
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
-  final _biggerFont = const TextStyle(fontSize: 18);
+  final _biggerFont = const TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+  );
 
   void _delete(WordPair pair) {
     _saved.remove(pair);
@@ -115,23 +118,37 @@ class _RandomWordsState extends State<RandomWords> {
   Widget _buildRow(WordPair pair) {
     final alreadySaved = _saved.contains(pair);
     return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
+      title: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(vertical: 20),
+        ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        ),
+        onPressed: () {},
       ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.greenAccent : null,
+      trailing: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(vertical: 20),
+        ),
+        child: Icon(
+          alreadySaved ? Icons.favorite : Icons.favorite_border,
+          color: alreadySaved ? Colors.greenAccent : Colors.white,
+        ),
+        onPressed: () {
+          setState(() {
+            if (alreadySaved) {
+              _delete(pair);
+            } else {
+              _saved.add(pair);
+            }
+          });
+        },
       ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _delete(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
     );
   }
 }
