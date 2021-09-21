@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:contador/routes.dart';
-import 'package:contador/edit_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -38,12 +37,14 @@ class _RandomWordsState extends State<RandomWords> {
     _saved.remove(pair);
   }
 
-  void _update(int i){
+  void _update(WordPair old) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           String _first;
           String _second;
+          final index = _suggestions.indexOf(old);
+          final formKey = GlobalKey<FormState>();
 
           return Scaffold(
             appBar: AppBar(
@@ -51,34 +52,49 @@ class _RandomWordsState extends State<RandomWords> {
             ),
             body: Padding(
               padding: EdgeInsets.all(15),
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'First',
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: old.first,
+                      decoration: InputDecoration(
+                        labelText: 'First',
+                      ),
+                      validator: (input) =>
+                          input == '' ? 'You need at least 1 character' : null,
+                      onSaved: (value) => _first = value,
                     ),
-                    onSaved: (value) =>  _first = value,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Second',
+                    TextFormField(
+                      initialValue: old.second,
+                      decoration: InputDecoration(
+                        labelText: 'Second',
+                      ),
+                      validator: (input) =>
+                          input == '' ? 'You need at least 1 character' : null,
+                      onSaved: (value) => _second = value,
                     ),
-                    onSaved: (value) =>  _second = value,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _suggestions[i] = WordPair(_first, _second);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Save',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
+                    TextButton(
+                      onPressed: () {
+                        if (formKey.currentState.validate()) {
+                          formKey.currentState.save();
+                          setState(() {
+                            _suggestions.remove(old);
+                            _suggestions.insert(index, WordPair(_first, _second));
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      },
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -183,8 +199,7 @@ class _RandomWordsState extends State<RandomWords> {
           ),
         ),
         onPressed: () {
-          setState(() => _update(_suggestions.indexOf(pair)));
-
+          _update(pair);
         },
       ),
       trailing: TextButton(
