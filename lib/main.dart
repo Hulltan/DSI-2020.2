@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:contador/routes.dart';
+import 'package:contador/edit_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +14,10 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       debugShowCheckedModeBanner: false,
-      home: RandomWords(),
+      routes: {
+        Routes.HOME: (_) => RandomWords(),
+        Routes.EDIT_SCREEN: (_) => EditScreen(),
+      },
     );
   }
 }
@@ -129,7 +134,11 @@ class _RandomWordsState extends State<RandomWords> {
             style: _biggerFont,
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            Routes.EDIT_SCREEN,
+          );
+        },
       ),
       trailing: TextButton(
         style: TextButton.styleFrom(
