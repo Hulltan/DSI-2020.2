@@ -38,7 +38,7 @@ class _RandomWordsState extends State<RandomWords> {
     _saved.remove(pair);
   }
 
-  void _update(int index){
+  void _update(int i){
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -67,7 +67,7 @@ class _RandomWordsState extends State<RandomWords> {
                   ),
                   TextButton(
                     onPressed: () {
-                      = WordPair(_first, _second);
+                      _suggestions[i] = WordPair(_first, _second);
                       Navigator.of(context).pop();
                     },
                     child: Text(
@@ -183,7 +183,8 @@ class _RandomWordsState extends State<RandomWords> {
           ),
         ),
         onPressed: () {
-          _update(_suggestions.index);
+          setState(() => _update(_suggestions.indexOf(pair)));
+
         },
       ),
       trailing: TextButton(
