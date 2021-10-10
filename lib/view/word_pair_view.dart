@@ -132,7 +132,6 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // DSIWordPair newWordPair = DSIWordPair();
     DSIWordPair pair = ModalRoute.of(context).settings.arguments;
     final formKey = GlobalKey<FormState>();
 
