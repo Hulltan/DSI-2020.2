@@ -4,7 +4,7 @@ class DSIWordPair extends Comparable<DSIWordPair> {
   int id;
   String first;
   String second;
-  bool favorite;
+  bool favorite = false;
 
   DSIWordPair() {
     WordPair wordPair = WordPair.random();
@@ -23,7 +23,6 @@ class DSIWordPair extends Comparable<DSIWordPair> {
 
   @override
   int compareTo(DSIWordPair other) {
-    throw UnimplementedError();
+   return 0;
   }
-
 }

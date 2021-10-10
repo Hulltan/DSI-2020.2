@@ -3,8 +3,6 @@ import 'package:contador/model/word_pair_model.dart';
 import 'package:contador/controller/word_pair_controller.dart';
 
 class Home extends StatefulWidget {
-  static const routeName = '/';
-
   @override
   _HomeState createState() => _HomeState();
 }
@@ -20,8 +18,7 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             icon: Icon(Icons.list),
-            onPressed: () => Navigator.pushNamed(
-                context, '/favorites',
+            onPressed: () => Navigator.pushNamed(context, '/favorites',
                 arguments: _controller.getFavorites()),
           ),
         ],
@@ -38,10 +35,10 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   final WordPairController _controller = WordPairController();
-  final _icons = {
-    true: Icon(Icons.favorite, color: Colors.greenAccent),
-    false: Icon(Icons.favorite_border, color: Colors.white),
-  };
+  final _biggerFont = const TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+  );
 
   Iterable<DSIWordPair> get items {
     List<DSIWordPair> result;
@@ -51,18 +48,19 @@ class _ListScreenState extends State<ListScreen> {
 
   _switchFavourite(DSIWordPair wordPair) {
     bool like = wordPair.favorite;
-    if (like == true) {
+    if (like == false) {
       wordPair.favorite = true;
     } else {
       wordPair.favorite = false;
-      _controller.update(wordPair);
-      setState(() {});
     }
+    _controller.refresh();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        itemCount: 2 * items.length,
         padding: const EdgeInsets.all(16),
         itemBuilder: (BuildContext _context, int i) {
           if (i.isOdd) {
@@ -71,7 +69,7 @@ class _ListScreenState extends State<ListScreen> {
           final int index = i ~/ 2;
           return Dismissible(
             direction: DismissDirection.endToStart,
-            key: ValueKey(index + 1),
+            key: UniqueKey(),
             child: _buildRow(context, items.elementAt(index)),
             onDismissed: (DismissDirection direction) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -101,18 +99,24 @@ class _ListScreenState extends State<ListScreen> {
         ),
         child: Align(
           alignment: Alignment.centerLeft,
-          child: Text('$wordPair'),
+          child: Text(
+            '$wordPair',
+            style: _biggerFont,
+          ),
         ),
         onPressed: () {
-          Navigator.pushNamed(context, '/update',
-              arguments: wordPair);
+          Navigator.pushNamed(context, '/update', arguments: wordPair);
         },
       ),
       trailing: TextButton(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 20),
         ),
-        child: _icons[wordPair.favorite],
+        child: Icon(
+          wordPair.favorite ? Icons.favorite : Icons.favorite_border,
+          color: wordPair.favorite ? Colors.greenAccent : Colors.white,
+        ),
+        // _icons[wordPair.favorite],
         onPressed: () => _switchFavourite(wordPair),
       ),
     );
@@ -120,7 +124,6 @@ class _ListScreenState extends State<ListScreen> {
 }
 
 class UpdateScreen extends StatefulWidget {
-
   @override
   _UpdateScreenState createState() => _UpdateScreenState();
 }
@@ -130,8 +133,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    DSIWordPair newWordPair;
-    DSIWordPair oldWordPair = ModalRoute.of(context).settings.arguments;
+    // DSIWordPair newWordPair = DSIWordPair();
+    DSIWordPair pair = ModalRoute.of(context).settings.arguments;
     final formKey = GlobalKey<FormState>();
 
     return Scaffold(
@@ -145,29 +148,29 @@ class _UpdateScreenState extends State<UpdateScreen> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                initialValue: oldWordPair.first,
+                initialValue: pair.first,
                 decoration: InputDecoration(
                   labelText: 'First',
                 ),
                 validator: (input) =>
                     input == '' ? 'You need at least 1 character' : null,
-                onSaved: (value) => newWordPair.first = value,
+                onSaved: (value) => pair.first = value,
               ),
               TextFormField(
-                initialValue: oldWordPair.second,
+                initialValue: pair.second,
                 decoration: InputDecoration(
                   labelText: 'Second',
                 ),
                 validator: (input) =>
                     input == '' ? 'You need at least 1 character' : null,
-                onSaved: (value) => newWordPair.second = value,
+                onSaved: (value) => pair.second = value,
               ),
               TextButton(
                 onPressed: () {
                   if (formKey.currentState.validate()) {
                     formKey.currentState.save();
                     setState(() {
-                      _controller.update(newWordPair);
+                      _controller.update(pair);
                       Navigator.of(context).pop();
                     });
                   }
@@ -189,22 +192,42 @@ class _UpdateScreenState extends State<UpdateScreen> {
 }
 
 class FavoriteScreen extends StatefulWidget {
-
   @override
   _FavoriteScreenState createState() => _FavoriteScreenState();
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   var _favoriteList = [];
+  final _biggerFont = const TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
     _favoriteList = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Saved Suggestions'),
+        appBar: AppBar(
+          title: Text('Saved Suggestions'),
+        ),
+        body: ListView.builder(
+            itemCount: 2 * _favoriteList.length,
+            padding: const EdgeInsets.all(16),
+            itemBuilder: (BuildContext _context, int i) {
+              if (i.isOdd) {
+                return Divider();
+              }
+              final int index = i ~/ 2;
+              return _buildFavorite(context, _favoriteList[index]);
+            }));
+  }
+
+  Widget _buildFavorite(BuildContext context, DSIWordPair favorite) {
+    return ListTile(
+      title: Text(
+        favorite.toString(),
+        style: _biggerFont,
       ),
-      body: ListView(children: _favoriteList),
     );
   }
 }

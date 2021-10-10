@@ -17,7 +17,7 @@ class WordPairController {
       wordPair.id = _nextWordPairId++;
       _wordPairs.add(wordPair);
     }
-    _wordPairs.sort();
+    refresh();
   }
 
   List<DSIWordPair> getAll() {
@@ -39,10 +39,15 @@ class WordPairController {
     return List.unmodifiable(result);
   }
 
+  void refresh(){
+    _wordPairs.sort((a,b) => a.first.compareTo(b.first));
+  }
+
   void update(DSIWordPair wordPair) {
-    final index = _wordPairs.indexOf(wordPair);
-    _wordPairs.remove(wordPair);
-    _wordPairs.insert(index, wordPair);
+    DSIWordPair oldWordPair = getById(wordPair.id);
+    delete(oldWordPair);
+    _wordPairs.add(wordPair);
+    refresh();
   }
 
   void delete(DSIWordPair wordPair) {
