@@ -116,7 +116,6 @@ class _ListScreenState extends State<ListScreen> {
           wordPair.favorite ? Icons.favorite : Icons.favorite_border,
           color: wordPair.favorite ? Colors.greenAccent : Colors.white,
         ),
-        // _icons[wordPair.favorite],
         onPressed: () => _switchFavourite(wordPair),
       ),
     );
